@@ -1,0 +1,40 @@
+server:
+  port: ${PORT:8081}
+  address: 0.0.0.0
+  shutdown: graceful
+
+spring:
+  application:
+    name: usuarios-service
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:usuariosBD}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: ${SHOW_SQL:true}
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    default-property-inclusion: always
+
+app:
+  jwt-secret: ${JWT_SECRET:}
+  token-ttl-seconds: ${TOKEN_TTL_SECONDS:604800}
+  admin-email: ${ADMIN_EMAIL:cashupinadmin@gmail.com}
+  admin-password: ${ADMIN_PASSWORD:}
+  vuelos-service-url: ${VUELOS_SERVICE_URL:http://localhost:8082}
+  recuperacion:
+    mostrar-codigo: ${RECUPERACION_MOSTRAR_CODIGO:true}
+  rutas-protegidas: /auth/me,/admin/**
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
