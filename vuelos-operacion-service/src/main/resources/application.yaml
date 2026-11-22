@@ -1,0 +1,36 @@
+server:
+  port: ${PORT:8082}
+  address: 0.0.0.0
+  shutdown: graceful
+
+spring:
+  application:
+    name: vuelos-operacion-service
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:vuelosBD}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: ${SHOW_SQL:true}
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    default-property-inclusion: always
+
+app:
+  jwt-secret: ${JWT_SECRET:}
+  token-ttl-seconds: ${TOKEN_TTL_SECONDS:604800}
+  usuarios-service-url: ${USUARIOS_SERVICE_URL:http://localhost:8081}
+  rutas-protegidas: /reserva,/reserva/**,/operacion/**,/admin/**
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
