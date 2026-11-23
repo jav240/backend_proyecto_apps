@@ -28,6 +28,8 @@ docker compose down
 ## Documentaci�n y Arquitectura
 - [Arquitectura Backend en Microservicios](docs/arquitectura-backend.md)
 
+Backend construido con Spring Boot y organizado en microservicios. Usa PostgreSQL para persistencia y Nginx como API Gateway.
+
 Los datos de PostgreSQL se guardan en un volumen de Docker. `docker compose down -v` también elimina ese volumen y los datos almacenados.
 
 ## Endpoints principales
