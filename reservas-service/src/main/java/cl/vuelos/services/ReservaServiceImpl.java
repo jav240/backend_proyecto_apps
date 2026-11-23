@@ -36,8 +36,8 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Autowired 
     public ReservaServiceImpl(ReservaRepository reservaRepo,
-                                VuelosRemotoClient vuelosClient,
-                                @Value("${app.usuarios-service-url:http://localhost:8081}") String usuariosServiceUrl) {
+                            VuelosRemotoClient vuelosClient,
+                            @Value("${app.usuarios-service-url:http://localhost:8081}") String usuariosServiceUrl) {
         this.reservaRepo = reservaRepo;
         this.vuelosClient = vuelosClient;
         this.usuariosServiceUrl = usuariosServiceUrl;
