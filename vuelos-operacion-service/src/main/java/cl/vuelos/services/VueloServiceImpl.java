@@ -30,7 +30,7 @@ public class VueloServiceImpl implements VueloService {
     private final String reservasServiceUrl;
     private final HttpClient httpClient;
 
-    @Autowired
+    @Autowired 
     public VueloServiceImpl(VueloRepository vueloRepo,
                             PasajeroRepository pasajeroRepo,
                             OperacionVueloRepository operacionRepo,
