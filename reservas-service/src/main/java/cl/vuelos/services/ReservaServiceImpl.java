@@ -34,10 +34,10 @@ public class ReservaServiceImpl implements ReservaService {
     private final HttpClient httpClient;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @Autowired
+    @Autowired 
     public ReservaServiceImpl(ReservaRepository reservaRepo,
-                              VuelosRemotoClient vuelosClient,
-                              @Value("${app.usuarios-service-url:http://localhost:8081}") String usuariosServiceUrl) {
+                                VuelosRemotoClient vuelosClient,
+                                @Value("${app.usuarios-service-url:http://localhost:8081}") String usuariosServiceUrl) {
         this.reservaRepo = reservaRepo;
         this.vuelosClient = vuelosClient;
         this.usuariosServiceUrl = usuariosServiceUrl;
