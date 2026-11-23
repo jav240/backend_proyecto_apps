@@ -18,3 +18,6 @@ Proyecto separado en **2 microservicios independientes en Spring Boot 3 (Java 21
 ```bash
 docker compose up --build
 ```
+
+## Documentación y Arquitectura
+- [Arquitectura Backend en Microservicios](docs/arquitectura-backend.md)

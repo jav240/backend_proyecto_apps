@@ -4,14 +4,20 @@ import cl.vuelos.entities.Vuelo;
 import cl.vuelos.exception.ApiException;
 import cl.vuelos.repository.OperacionVueloRepository;
 import cl.vuelos.repository.PasajeroRepository;
-import cl.vuelos.repository.ReservaRepository;
 import cl.vuelos.repository.VueloRepository;
 import cl.vuelos.util.Fechas;
 import cl.vuelos.util.Validaciones;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,18 +25,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class VueloServiceImpl implements VueloService {
 
     private final VueloRepository vueloRepo;
-    private final ReservaRepository reservaRepo;
     private final PasajeroRepository pasajeroRepo;
     private final OperacionVueloRepository operacionRepo;
+    private final String reservasServiceUrl;
+    private final HttpClient httpClient;
 
+    @Autowired
     public VueloServiceImpl(VueloRepository vueloRepo,
-                            ReservaRepository reservaRepo,
                             PasajeroRepository pasajeroRepo,
-                            OperacionVueloRepository operacionRepo) {
+                            OperacionVueloRepository operacionRepo,
+                            @Value("${app.reservas-service-url:http://localhost:8083}") String reservasServiceUrl) {
         this.vueloRepo = vueloRepo;
-        this.reservaRepo = reservaRepo;
         this.pasajeroRepo = pasajeroRepo;
         this.operacionRepo = operacionRepo;
+        this.reservasServiceUrl = reservasServiceUrl;
+        this.httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
     }
 
     private record DatosVuelo(String base, String fechaIso, String horario, String aeronave, String piloto, int cupos) {}
@@ -101,7 +110,19 @@ public class VueloServiceImpl implements VueloService {
     }
 
     private boolean enUso(int vueloId) {
-        return reservaRepo.existsByVuelo_Id(vueloId) || pasajeroRepo.existsByVuelo_Id(vueloId);
+        if (pasajeroRepo.existsByVuelo_Id(vueloId)) return true;
+        try {
+            HttpRequest req = HttpRequest.newBuilder()
+                    .uri(URI.create(reservasServiceUrl + "/internal/reservas/existe-vuelo/" + vueloId))
+                    .timeout(Duration.ofSeconds(3))
+                    .GET()
+                    .build();
+            HttpResponse<String> res = httpClient.send(req, HttpResponse.BodyHandlers.ofString());
+            if (res.statusCode() == 200 && res.body().contains("true")) {
+                return true;
+            }
+        } catch (Exception ignored) {}
+        return false;
     }
 
     private DatosVuelo validar(Map<String, Object> body, int cuposMinimos) {
@@ -117,7 +138,7 @@ public class VueloServiceImpl implements VueloService {
         if (!Validaciones.horarioValido(horario)) campos.put("horario", "El horario debe ser como 10:00 - 11:00.");
 
         String matricula = Validaciones.matricula(Validaciones.texto(body.get("matricula")));
-        if (matricula == null) campos.put("matricula", "La matrícula no es válida (ej. CC-AAA).");
+        if (matricula == null) campos.put("matricula", "La matricula no es valida (ej. CC-AAA).");
 
         String modelo = Validaciones.texto(body.get("modelo")).trim();
         if (modelo.isEmpty() || modelo.length() > 60) campos.put("modelo", "Ingresa el modelo de la aeronave.");

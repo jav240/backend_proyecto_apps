@@ -17,9 +17,8 @@ public class Reserva {
     @Column(name = "usuario_id")
     private Long usuarioId;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "vuelo_id", nullable = false)
-    private Vuelo vuelo;
+    @Column(name = "vuelo_id", nullable = false)
+    private Integer vueloId;
 
     @Column(name = "consentimiento_firmado", nullable = false)
     private boolean consentimientoFirmado = false;

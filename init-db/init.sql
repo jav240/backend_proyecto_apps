@@ -1,2 +1,4 @@
 CREATE DATABASE usuariosBD;
 CREATE DATABASE vuelosBD;
+
+CREATE DATABASE "reservasBD";
